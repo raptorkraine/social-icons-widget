@@ -11,12 +11,16 @@ extract($args);
 $title = empty($instance['title']) ? 'Follow Us' : apply_filters('widget_title', $instance['title']);
 $icons = $instance['icons'];
 $labels = $instance['labels'];
+$target = $instant['target'];
+$show_title = $instance['show_title'];
 
 echo $before_widget;
 
-echo $before_title;
-echo $title;
-echo $after_title;
+if($show_title == '') {
+	echo $before_title;
+	echo $title;
+	echo $after_title;
+}
 
 if($labels == 'show') { $ul_class = 'show-labels '; }
 else { $ul_class = ''; }
@@ -34,7 +38,8 @@ $ul_class .= 'icons-'.$icons;
 			$icon_path = STYLESHEETPATH .'/social_icons/'.$size.'/'.$id.'.{gif,jpg,jpeg,png}';
 		}
 		else {
-			$icon_path = ABSPATH .'wp-content/plugins/social-media-icons-widget/icons/'.$icons.'/'.$id.'.{gif,jpg,jpeg,png}';			
+			$siw_abs_path = str_replace('lib/', '', plugin_dir_path( __FILE__ ));
+			$icon_path =  $siw_abs_path . 'icons/'.$icons.'/'.$id.'.{gif,jpg,jpeg,png}';			
 		}
 		
 		$result = glob( $icon_path, GLOB_BRACE );
@@ -46,11 +51,11 @@ $ul_class .= 'icons-'.$icons;
 			}
 			else {
 				$path = explode('plugins', $result[0]);
-				$icon = get_bloginfo('url').'/wp-content/plugins'.$path[1];
+				$icon = plugins_url().''.$path[1];
 			}
 		}
 		elseif( $labels != 'show' && $icons != 'small' ) {
-			$icon = get_bloginfo('url').'/wp-content/plugins/social-media-icons-widget/icons/'.$icons.'/_unknown.jpg';
+			$icon = plugins_url().'/social-media-icons-widget/icons/'.$icons.'/_unknown.jpg';
 		}
 		else {
 			$icon = '';
@@ -63,7 +68,7 @@ $ul_class .= 'icons-'.$icons;
 		else { $title = '<span class="site-label">'.$title.'</span>'; }
 		
 	?>
-		<li><a href="<?php echo $instance[$id]; ?>"><?php echo $image; ?><?php echo $title; ?></a></li>
+		<li><a href="<?php echo $instance[$id]; ?>" <?php if($target != 'show' ) { ?> target="_blank" <?php } ?>><?php echo $image; ?><?php echo $title; ?></a></li>
 	<?php endif; ?>
 <?php endforeach; ?>
 </ul>
